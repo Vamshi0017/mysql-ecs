@@ -3,8 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Cleaning and installing Maven dependencies...
-      - mvn clean install
+
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=005698945164.dkr.ecr.ap-southeast-2.amazonaws.com/mysql-with-ecs
