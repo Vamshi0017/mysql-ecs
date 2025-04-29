@@ -3,11 +3,12 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - echo Cleaning and installing Maven dependencies...
       - mvn clean install
       - echo Logging in to Amazon ECR...
       - aws --version
       - REPOSITORY_URI=005698945164.dkr.ecr.ap-southeast-2.amazonaws.com/mysql-with-ecs
-      - aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin $REPOSITORY_URI
+      - aws ecr get-login-password --region ap-southeast-2 | docker login --username AWS --password-stdin 005698945164.dkr.ecr.ap-southeast-2.amazonaws.com
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=build-$(echo $CODEBUILD_BUILD_ID | awk -F":" '{print $2}')
       
@@ -25,7 +26,7 @@ phases:
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
       - echo Writing image definitions file...
-      - DOCKER_CONTAINER_NAME=javatechie-registry
+      - DOCKER_CONTAINER_NAME=springboot-app  # <<< Match your ECS Task container name
       - printf '[{"name":"%s","imageUri":"%s"}]' $DOCKER_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
       - echo printing imagedefinitions.json
       - cat imagedefinitions.json
